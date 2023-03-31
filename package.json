@@ -18,7 +18,7 @@
     "sanitize-html": "^1.21.1"
   },
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
+    "start": "react-scripts start",
     "prod": "npm install -g serve && serve -s build",
     "build": "react-scripts build",
     "test": "react-scripts test",
