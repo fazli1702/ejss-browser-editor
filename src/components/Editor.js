@@ -229,7 +229,7 @@ export default class Editor extends Component {
                 );
               })
             ) : (
-              <div>No editable variables found.</div>
+              <div>No editable variables found. email weelookang@gmail.com to add this feature to your selected EJSS model. Basically, VariableTab must be rename to EditableVariable and function rename as EditableFunction.</div>
             )}
           </TabPane>
           <TabPane tab="Functions" key="2">
