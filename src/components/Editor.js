@@ -184,6 +184,9 @@ export default class Editor extends Component {
         onOk={this.onOkEditor}
         onCancel={toggleEditor}
         okText="Download model"
+        style={{
+          minWidth:`50vw`,   // width for entire edit model box
+        }}
       >
         {isSaved ? (
           <Alert
