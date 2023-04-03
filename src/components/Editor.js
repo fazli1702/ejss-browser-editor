@@ -7,6 +7,7 @@ import {
   EDITABLE_FUNCTIONS_REGEX,
 } from "../utils/constants";
 import iconv from "iconv-lite";
+import { comment } from "jszip/lib/defaults";
 const { TabPane } = Tabs;
 
 export default class Editor extends Component {
@@ -153,7 +154,7 @@ export default class Editor extends Component {
   findCommentInXML = (variable) => {
     var parser = new DOMParser();
     var xDoc = parser.parseFromString(
-      iconv.decode(new Buffer(this.state.ejssFile.slice(3)), "utf16"),
+      iconv.decode(Buffer.from(this.state.ejssFile.slice(3)), "utf16"),
       "text/xml"
     );
 
@@ -165,7 +166,11 @@ export default class Editor extends Component {
         let nodeName = x[i].lastElementChild.nodeName;
 
         if (nodeName == "Comment") {
-          return x[i].lastElementChild.childNodes[0].nodeValue;
+          let comment = x[i].lastElementChild.childNodes[0].nodeValue;
+          if (comment === "null") {
+            return "";
+          }
+          return comment;
         }
       }
     }
@@ -252,6 +257,9 @@ export default class Editor extends Component {
                         placeholder={value}
                         value={value}
                         onChange={this.onChange}
+                        style={{
+                          minHeight:`50vh`,
+                        }}
                       />
                       <code>{`}`}</code>
                     </div>
