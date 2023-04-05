@@ -178,9 +178,20 @@ export default class Home extends Component {
           style={{
             padding: 10,
             width: `100%`,
+            border: `3px solid red`,  // draw border around div
           }}
         >
-          <h1>Easy JavaScript Simulation (EJSS) web editor using simulation templates</h1>
+          <h1>
+            <span 
+            style={{
+              color: `red`,
+              fontWeight: `bold`,
+            }}>
+              Method 1:
+            </span>
+            {' '} {/* display whitespace */}
+            Easy JavaScript Simulation (EJSS) web editor using simulation templates
+          </h1>
           <p>click on thumbnail to start</p>
           <div
             style={{
@@ -223,48 +234,67 @@ export default class Home extends Component {
           </div>
         </div>
 
-        <Spin spinning={isLoading}>
-          <h1>EJSS web editor using choose file to start</h1>
-          <p>choose your own zip file</p>
-          <div
-            style={{
-              minWidth: 200,
-              width: `50vw`,
-            }}
-          >
-            {showError ? errorMessage : null}
+        <br/>
 
-            <Input
+        <div
+          style={{
+            padding: `10px`,
+            border: `3px solid red`,
+          }}
+        >
+          <Spin spinning={isLoading}>
+            <h1>
+              <span 
+                style={{
+                  color: `red`,
+                  fontWeight: `bold`,
+                }}>
+                Method 2:
+                </span>
+              {' '} {/* display whitespace */}
+              EJSS web editor using choose file to start
+            </h1>
+            <p>click "Choose File" button to start</p>
+            <div
               style={{
-                marginTop: 20,
+                minWidth: 200,
+                width: `50vw`,
               }}
-              type="file"
-              accept=".zip"
-              onChange={this.onUpload.bind(this)}
-            />
-          </div>
+            >
+              {showError ? errorMessage : null}
 
-          <Button
-            style={{
-              margin: 20,
-            }}
-            onClick={this.onSubmit}
-            disabled={disabled}
-          >
-            Read Model of chosen file
-          </Button>
+              <Input
+                style={{
+                  marginTop: 20,
+                }}
+                type="file"
+                accept=".zip"
+                onChange={this.onUpload.bind(this)}
+              />
+            </div>
 
-          {doc && ejssFile ? (
-            <Editor
-              showEditor={showEditor}
-              toggleEditor={this.toggleEditor}
-              doc={doc}
-              ejssFile={ejssFile}
-              zip={zip}
-              folderName={folderName}
-            />
-          ) : null}
-        </Spin>
+            <Button
+              style={{
+                margin: 20,
+              }}
+              onClick={this.onSubmit}
+              disabled={disabled}
+            >
+              Read Model of chosen file
+            </Button>
+
+            {doc && ejssFile ? (
+              <Editor
+                showEditor={showEditor}
+                toggleEditor={this.toggleEditor}
+                doc={doc}
+                ejssFile={ejssFile}
+                zip={zip}
+                folderName={folderName}
+              />
+            ) : null}
+          </Spin>
+        </div>
       </div>
     );
   }
