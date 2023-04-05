@@ -188,7 +188,7 @@ export default class Editor extends Component {
         okButtonProps={{ disabled: disabledDownload }}
         onOk={this.onOkEditor}
         onCancel={toggleEditor}
-        okText="Download model"
+        okText="Save model to your computer"
         style={{
           minWidth:`50vw`,   // width for entire edit model box
         }}
@@ -275,7 +275,7 @@ export default class Editor extends Component {
           disabled={disabledSave}
           onClick={this.onSave}
         >
-          Save
+          Save your edits
         </Button>
       </Modal>
     );

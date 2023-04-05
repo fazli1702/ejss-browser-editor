@@ -180,7 +180,8 @@ export default class Home extends Component {
             width: `100%`,
           }}
         >
-          <h1>iwant2study Library</h1>
+          <h1>Easy JavaScript Simulation (EJSS) web editor using simulation templates</h1>
+          <p>click on thumbnail to start</p>
           <div
             style={{
               display: `flex`,
@@ -223,7 +224,8 @@ export default class Home extends Component {
         </div>
 
         <Spin spinning={isLoading}>
-          <h1>EJSS Sim Editor</h1>
+          <h1>EJSS web editor using choose file to start</h1>
+          <p>choose your own zip file</p>
           <div
             style={{
               minWidth: 200,
@@ -249,7 +251,7 @@ export default class Home extends Component {
             onClick={this.onSubmit}
             disabled={disabled}
           >
-            Get Model
+            Read Model of chosen file
           </Button>
 
           {doc && ejssFile ? (
