@@ -226,7 +226,7 @@ export default class Editor extends Component {
                       <code>{name}</code>
                     </b>
                     <br />
-                    {comment ? <i>{comment}</i> : null}
+                    <i>{comment}</i>
                     <Input
                       name={`variables_${name}`}
                       placeholder={value}
