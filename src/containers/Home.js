@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import _ from "lodash";
 import { Input, Button, Spin, Card } from "antd";
 import axios from "axios";
@@ -146,6 +146,18 @@ export default class Home extends Component {
     this.loadLibrary();
   }
 
+  displayText = () => {
+    const [isHovering, setIsHovering] = useState(false);
+
+    const handleMouseOver = () => {
+      setIsHovering(true);
+    };
+
+    const handleMouseOut = () => {
+      setIsHovering(false);
+    };
+  }
+
   render() {
     var {
       isLoading,
@@ -225,7 +237,14 @@ export default class Home extends Component {
                         });
                       }}
                       cover={<img src={item.imageUrl} />}
+                      onMouseOver={handleMouseOver}
+                      onMouseOut={handleMouseOut}
                     >
+                      <div style={{
+                        color:`blue`,
+                      }}>
+                        Open
+                      </div>
                       <b>{item.title}</b>
                     </Card>
                   );
