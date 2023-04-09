@@ -14,6 +14,8 @@ export default class Home extends Component {
       url: "",
       isLoading: false,
       showEditor: false,
+      isHovering: false,
+      isHoveringName: "",
     };
   }
 
@@ -146,16 +148,13 @@ export default class Home extends Component {
     this.loadLibrary();
   }
 
-  displayText = () => {
-    const [isHovering, setIsHovering] = useState(false);
+  getHoveringLink() {
+    let fileName = this.state.isHoveringName;
+    let link = "https://iwant2study.org/lookangejss/EditableSimulations/";
 
-    const handleMouseOver = () => {
-      setIsHovering(true);
-    };
-
-    const handleMouseOut = () => {
-      setIsHovering(false);
-    };
+    fileName = fileName.substring(0, fileName.length - 4);
+    link += fileName + '/'
+    return link
   }
 
   render() {
@@ -237,14 +236,26 @@ export default class Home extends Component {
                         });
                       }}
                       cover={<img src={item.imageUrl} />}
-                      onMouseOver={handleMouseOver}
-                      onMouseOut={handleMouseOut}
+                      onMouseOver={() => {
+                        this.setState({
+                          isHovering: true,
+                          isHoveringName: item.folderName,
+                        })
+                      }}
+                      onMouseOut={() => {
+                        this.setState({isHovering: false})
+                      }}
                     >
-                      <div style={{
-                        color:`blue`,
-                      }}>
+                      <a
+                        href={this.getHoveringLink()}
+                        target="_blank"   // open link on new tab
+                        style={{
+                          visibility: (this.state.isHovering && this.state.isHoveringName == item.folderName) ? `visible` : `hidden`,
+                        }}
+                      >
                         Open
-                      </div>
+                      </a>
+                      <br/>
                       <b>{item.title}</b>
                     </Card>
                   );
