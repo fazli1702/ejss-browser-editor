@@ -107,11 +107,6 @@ export default class Home extends Component {
               });
             });
           });
-          // s[0].async("string").then((s) => {
-          //   this.setState({
-          //     ejssFile: s,
-          //   });
-          // });
         }
 
         this.setState({

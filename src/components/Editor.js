@@ -6,8 +6,6 @@ import {
   EDITABLE_VARIABLES_REGEX,
   EDITABLE_FUNCTIONS_REGEX,
 } from "../utils/constants";
-import iconv from "iconv-lite";
-import { comment } from "jszip/lib/defaults";
 const { TabPane } = Tabs;
 
 export default class Editor extends Component {
@@ -27,7 +25,7 @@ export default class Editor extends Component {
       {
         [type]: currentTypeState,
       },
-      () => console.log(this.state[type])
+      // () => console.log(this.state[type])
     );
   };
 
@@ -40,12 +38,14 @@ export default class Editor extends Component {
     const variableNames = Object.keys(variables);
     const functionNames = Object.keys(functions);
 
+    // update values of editable variables
     for (var i = 0; i < variableNames.length; i++) {
       const varName = variableNames[i];
       const value = variables[varName];
       // console.log(varName, value)
       if (!_.isUndefined(value)) {
         // search and replace
+
         // xhtml / html
         // console.log(
         //   `${EDITABLE_VARIABLES_REGEX.replace("[a-zA-Z0-9]+", varName)}`
@@ -62,34 +62,22 @@ export default class Editor extends Component {
         for (let j = 0; j < variableTags.length; j++) {
           let variableTag = variableTags[j];
           let variableName = variableTag.firstElementChild.childNodes[0].nodeValue;
+
           if (variableName == varName) {
             let children = variableTag.children;
+
             for (let k = 0; k < children.length; k++) {
               let child = children[k];
               if (child.nodeName == "Value") {
-                xDoc.getElementsByTagName("Variable")[j].children[k].childNodes[0].nodeValue = value;
-                // child.childNodes[0].nodeValue = value;
+                child.childNodes[0].nodeValue = value;  // update variable value
               }
             }
           }
-          
-
-          // Check name
-          // let nameTags = variableTag.getElementsByTagName("Name");
-          // if (nameTags.length < 1) continue;
-          // let nameTag = nameTags[0];
-          // if (nameTag.textContent == varName) {
-          //   let valueTags = variableTag.getElementsByTagName("Value");
-          //   if (valueTags.length < 1) continue;
-          //   let valueTag = valueTags[0];
-          //   console.log(`${nameTag.textContent} = ${valueTag.textContent}`);
-          //   console.log(variableTag);
-          //   xDoc.getElementsByTagName("Variable")[j].childNodes
-          // }
         }
       }
     }
 
+    // update values of editable function
     for (var i = 0; i < functionNames.length; i++) {
       const funcName = functionNames[i];
       const value = functions[funcName];
@@ -110,48 +98,31 @@ export default class Editor extends Component {
 
         // ejss / xml file
         var functionTags = xDoc.getElementsByTagName("Osejs.Model.Library.Page");
-        // console.log(functionTags);
         for (let j = 0; j < functionTags.length; j++) {
           let functionTag = functionTags[j];
           let functionName = functionTag.getElementsByTagName("Name")[0].textContent;
+
           if (functionName == "EditableFunction") {
             let content = functionTag.lastElementChild;
-            let k = functionTag.children.length;
-
             let code = content.lastElementChild;
-            let x = content.children.length;
-
-            let functionText = xDoc.getElementsByTagName("Osejs.Model.Library.Page")[j].children[k-1].children[x-1].textContent;
+            let functionText = code.textContent;
             
             // add function name and curly bracket at start and end of function
-            let formatFunction = "";
-            for (let y = 0; y < functionText.length; y++) {
-              if (functionText[y] == "{") {
-                formatFunction += functionText[y] + "\n";
+            let functionString = "";
+            for (let k = 0; k < functionText.length; k++) {
+              if (functionText[k] == "{") {
+                functionString += functionText[k] + "\n";
                 break;
               }
-              formatFunction += functionText[y];
+              functionString += functionText[k];
             }
-            formatFunction += value + "}";
-
-            // console.log(functionText);
-            // console.log(formatFunction);
-            
-            // console.log("before");
-            // console.log(xDoc.getElementsByTagName("Osejs.Model.Library.Page")[j].children[k-1].children[x-1].textContent);
-
-            xDoc.getElementsByTagName("Osejs.Model.Library.Page")[j].children[k-1].children[x-1].textContent = formatFunction;
-
-            // console.log("after");
-            // console.log(xDoc.getElementsByTagName("Osejs.Model.Library.Page")[j].children[k-1].children[x-1].textContent);
-            // console.log(xDoc.getElementsByTagName("Osejs.Model.Library.Page")[j].children[k-1].children[x-1]);
+            functionString += formattedString + "}";
+            code.textContent = functionString;   // update function value
           }
         }
       }
     }
-    // console.log(xDoc);
 
-    // console.log(xDoc);
     let xDocString = (new XMLSerializer()).serializeToString(xDoc);
     this.setState({
       isSaved: true,
@@ -258,11 +229,9 @@ export default class Editor extends Component {
     var x = xDoc.getElementsByTagName("Variable");
 
     for (var i = 0; i < x.length; i++) {
-      // console.log(x[i]);
       let variableName = x[i].firstElementChild.childNodes[0].nodeValue;
       if (variableName === variable) {
         let nodeName = x[i].lastElementChild.nodeName;
-        // console.log(x[i]);
 
         if (nodeName == "Comment") {
           let comment = x[i].lastElementChild.childNodes[0].nodeValue;
@@ -358,6 +327,7 @@ export default class Editor extends Component {
                         onChange={this.onChange}
                         style={{
                           minHeight:`50vh`,
+                          fontFamily:`monospace`,
                         }}
                       />
                       <code>{`}`}</code>
