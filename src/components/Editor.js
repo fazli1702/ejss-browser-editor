@@ -63,16 +63,12 @@ export default class Editor extends Component {
           let variableTag = variableTags[j];
           let variableName = variableTag.firstElementChild.childNodes[0].nodeValue;
           if (variableName == varName) {
-            let x = variableTag.children;
-            for (let k = 0; k < x.length; k++) {
-              let child = x[k];
+            let children = variableTag.children;
+            for (let k = 0; k < children.length; k++) {
+              let child = children[k];
               if (child.nodeName == "Value") {
-                // update value
-                // console.log(`before: ${xDoc.getElementsByTagName("Variable")[j].children[k].childNodes[0].nodeValue}`);
-                // console.log(xDoc.getElementsByTagName("Variable")[j].children[k].childNodes[0].nodeValue);
-                // console.log(xDoc.getElementsByTagName("Variable")[j].children[k].childNodes[0]);
                 xDoc.getElementsByTagName("Variable")[j].children[k].childNodes[0].nodeValue = value;
-                // console.log(`after: ${xDoc.getElementsByTagName("Variable")[j].children[k].childNodes[0].nodeValue}`);
+                // child.childNodes[0].nodeValue = value;
               }
             }
           }
@@ -148,22 +144,25 @@ export default class Editor extends Component {
 
             // console.log("after");
             // console.log(xDoc.getElementsByTagName("Osejs.Model.Library.Page")[j].children[k-1].children[x-1].textContent);
+            // console.log(xDoc.getElementsByTagName("Osejs.Model.Library.Page")[j].children[k-1].children[x-1]);
           }
         }
       }
     }
     // console.log(xDoc);
 
+    // console.log(xDoc);
+    let xDocString = (new XMLSerializer()).serializeToString(xDoc);
     this.setState({
       isSaved: true,
       doc: doc,
-      xDoc: xDoc,
+      ejssFile: xDocString,
     });
   };
 
   onOkEditor = () => {
     // this function replaces xhtml / index in zip file and preps for download
-    const { doc } = this.state;
+    const { doc, ejssFile } = this.state;
     const { zip, folderName } = this.props;
 
     const docBlob = new Blob([doc]);
@@ -171,16 +170,31 @@ export default class Editor extends Component {
     // just generate index.html - weehee, update old sims!
     zip.file(`index.html`, docBlob);
 
+    let zippedEjssFiles = zip.file(/.*\.ejss/);
+    if (zippedEjssFiles.length >= 1) {
+      zip.file(zippedEjssFiles[0].name, ejssFile);
+    }
     // find name of file
-    try {
-      const name = zip.file(/^(\S+_Simulation\.xhtml)$/)[0].name;
+    let files = zip.file(/^(\S+_Simulation\.xhtml)$/);
+    let name;
+    if (files.length < 1) {
+      files = zip.file(/^(\S+\.ejss)$/);
+      if (files.length < 1) {
+        // error
+      } else {
+        name = files[0].name;
+        name = name.split(".").slice(0, -1).join(".");
+      }
+      
+
+
+      zip.file(`${name}_Simulation.xhtml`, docBlob);
+    } else {
+      name = files[0].name;
       // rewrite Sim file
       zip.file(name, docBlob);
-    } catch {
-      // might not exist, grab name from ejss file.
-      const name = zip.file(/^(\S+\.ejss)$/)[0].name;
-      zip.file(`${name.split(".")[0]}_Simulation.xhtml`, docBlob);
     }
+    
 
     zip.generateAsync({ type: "blob" }).then((blob) => {
       saveAs(blob, `${folderName}`);
@@ -228,16 +242,14 @@ export default class Editor extends Component {
         doc: doc,
         isSaved: false,
         ejssFile: ejssFile,
+        xDocString: "",
       };
     }
   }
 
   readXML = () => {
     var parser = new DOMParser();
-    var xDoc = parser.parseFromString(
-      iconv.decode(Buffer.from(this.state.ejssFile.slice(3)), "utf16"),
-      "text/xml"
-    );
+    var xDoc = parser.parseFromString(this.state.ejssFile, "text/xml");
     return xDoc;
   }
 
@@ -250,6 +262,7 @@ export default class Editor extends Component {
       let variableName = x[i].firstElementChild.childNodes[0].nodeValue;
       if (variableName === variable) {
         let nodeName = x[i].lastElementChild.nodeName;
+        // console.log(x[i]);
 
         if (nodeName == "Comment") {
           let comment = x[i].lastElementChild.childNodes[0].nodeValue;

@@ -4,6 +4,7 @@ import { Input, Button, Spin, Card } from "antd";
 import axios from "axios";
 import Editor from "../components/Editor";
 import JSZip from "jszip";
+import iconv from "iconv-lite";
 
 const { Meta } = Card;
 export default class Home extends Component {
@@ -97,11 +98,20 @@ export default class Home extends Component {
 
         var s = zip.file(/^(.+\.ejss)$/);
         if (s.length > 0) {
-          s[0].async("string").then((s) => {
-            this.setState({
-              ejssFile: s,
+          s[0].async("blob").then((s) => {
+            s.arrayBuffer().then((ab) => {
+              const buff = Buffer.from(ab)
+              let ejssFile = iconv.decode(buff, "utf-16");
+              this.setState({
+                ejssFile: ejssFile
+              });
             });
           });
+          // s[0].async("string").then((s) => {
+          //   this.setState({
+          //     ejssFile: s,
+          //   });
+          // });
         }
 
         this.setState({
